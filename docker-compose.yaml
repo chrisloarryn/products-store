@@ -1,0 +1,50 @@
+# Set the version of docker compose to use
+version: '3.9'
+
+# The containers that compose the project
+services:
+  nestjs_test_api:
+    # Build the image from the Dockerfile
+    build:
+      context: .
+      dockerfile: Dockerfile_dev
+    # The port to expose
+    ports:
+      - '3000:3000'
+    networks:
+      - some-network
+    # The environment variables to use
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      DB_HOST: postgres_test_db
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_PORT: 5432
+      DB_NAME: postgres
+      STAGE: DEV
+      JWT_SECRET: VKJdlEb6iYHcK7Q3NX4GXjrOVxxWKDEKRiJyHwzYcyVqqClW22o2gpTCqD3Tjcc1q4MhncMQFdbK32wmejD87ICEofmIQfWkJGIC
+      JWT_EXPIRES_IN: 86400
+    # The command to run
+    command: npm start
+    # The dependencies of the container
+    #    volumes:
+    #      - /home/node/app/node_modules
+
+    depends_on:
+      - postgres_db
+  postgres_db:
+    image: postgres:14.0
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - '65432:5432'
+    networks:
+      - some-network
+    container_name: postgres_db
+
+networks:
+  some-network:
+    driver: bridge
