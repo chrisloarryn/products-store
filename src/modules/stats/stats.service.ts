@@ -1,12 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import { User } from '../auth/entities/user.entity';
-import { CreateStatDto } from './dto/create-stat.dto';
-import { UpdateStatDto } from './dto/update-stat.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Product } from '../products/entities';
-import { StatsResponse } from './entities/stat.entity';
 
 @Injectable()
 export class StatsService {

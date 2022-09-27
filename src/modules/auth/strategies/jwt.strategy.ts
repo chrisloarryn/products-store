@@ -8,28 +8,25 @@ import { User } from '../entities/user.entity';
 import { JwtPayload } from '../interfaces/jwt-payload.interface';
 
 @Injectable()
+@Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-
     configService: ConfigService,
   ) {
     super({
-      secretOrKey: configService.get('JWT_SECRET'),
+      secretOrKey: process.env.JWT_SECRET || configService.get<string>('JWT_SECRET'),
+      ignoreExpiration: false,
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
     });
   }
 
-  async validate(payload: JwtPayload): Promise<User> {
-    const { id } = payload;
-
+  async validate({ id, exp, iat }: JwtPayload) {
+    const timeDiff = exp - iat;
+    if (timeDiff <= 0) throw new UnauthorizedException('Token expired');
     const user = await this.userRepository.findOneBy({ id });
-
-    if (!user) throw new UnauthorizedException('Token not valid');
-
-    if (!user.isActive) throw new UnauthorizedException('User is inactive, talk with an admin');
-
+    if (!user) throw new UnauthorizedException('Unauthorized user');
     return user;
   }
 }
