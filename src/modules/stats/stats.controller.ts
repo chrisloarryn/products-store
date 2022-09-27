@@ -22,8 +22,8 @@ export class StatsController {
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   findMyStats(@GetUser() user: User, @Query() paginationDto: PaginationDto) {
     const logger = new Logger('Bootstrap');
-    logger.log('StatsController.findMyStats()');
-    logger.debug('log', user);
+    logger.debug('StatsController.findMyStats()');
+    logger.debug(`StatsController.UserSession: ${JSON.stringify(user)}`);
     return this.statsService.findMyStats(user, paginationDto);
   }
 }
